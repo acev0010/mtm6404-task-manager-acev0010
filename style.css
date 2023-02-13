@@ -1,0 +1,52 @@
+.list-group {
+    
+    margin-top: 20px;
+}
+
+body {
+   margin: 20px;
+   
+}
+
+.image {
+    width: 100px;
+    height: 100px;
+   display: flex;
+    opacity: 0.4;
+
+}
+
+.image:hover {
+    opacity: 1;
+
+}
+
+.footer {
+    display: flex;
+    text-align: center;
+    font-size: 1.5rem;
+    gap: 10px;
+    margin: 10px;
+    
+    
+}
+
+.footer h1 {
+    font-size: 1.5rem;
+}
+
+.info {
+    
+    margin-top: 20px;
+}
+
+@media only screen and (min-width: 1000px) {
+ 
+    .list-group {
+        width: 30%;
+        
+    }
+    .info {
+        width: 30%;
+    }
+  }
