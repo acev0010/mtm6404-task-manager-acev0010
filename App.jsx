@@ -5,13 +5,13 @@ import TaskList from "./components/TaskList";
 import Warning from "./components/Warning";
 import Logo from "./components/Logo";
 
-// ask about this
+// you wrote this during class, might delete later
 
-const listOfTasks = [
-    { id:1, title: "Web Apps", dueDate: "Mon Nov 1st" },
-    { id:2, title: "Applied Projects", dueDate: "Tue Nov 2nd" },
-    { id:3, title: "Web Apps", dueDate: "Mon Nov 1st" }
-]
+// const listOfTasks = [
+//     { id:1, title: "Web Apps", dueDate: "Mon Nov 1st" },
+//     { id:2, title: "Applied Projects", dueDate: "Tue Nov 2nd" },
+//     { id:3, title: "Web Apps", dueDate: "Mon Nov 1st" }
+// ]
 
 function Time(props) {
     const date = new Date()
@@ -56,13 +56,5 @@ export default function App() {
     )
 }
 
-// ask about this 
 
-{/* <ul>
-    {listOfTasks.map((otherItem) => {
-        return <List data={otherItem} />
-   } )
-}
-    <List />
-</ul> */}
 
