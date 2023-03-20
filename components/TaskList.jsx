@@ -5,7 +5,7 @@ export default function TaskList() {
   const [newTaskPriority, setNewTaskPriority] = useState("Low");
   const [tasks, setTasks] = useState([]);
 
-  // Load tasks from local storage on mount
+  // local storage load
   useEffect(() => {
     const storedTasks = JSON.parse(localStorage.getItem("tasks"));
     if (storedTasks) {
@@ -13,7 +13,7 @@ export default function TaskList() {
     }
   }, []);
 
-  // Save tasks to local storage whenever tasks change
+  // local storage
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
@@ -32,17 +32,22 @@ export default function TaskList() {
     }
   };
 
-  const handleToggleStatus = (id) => {
+  // status function for complete tasks
+
+  function handleToggleStatus(id) {
     setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, status: task.status === "complete" ? "incomplete" : "complete" } : task
+      tasks.map((task) => task.id === id ? { ...task, status: task.status === "complete" ? "incomplete" : "complete" } : task
       )
     );
-  };
+  }
 
-  const handleRemoveTask = (id) => {
+  // remove tasks
+
+  function handleRemoveTask(id) {
     setTasks(tasks.filter((task) => task.id !== id));
-  };
+  }
+
+  // task sorting
 
   tasks.sort((task1, task2) => {
     const priorities = ["High", "Medium", "Low"];
