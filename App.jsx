@@ -1,11 +1,11 @@
 
 
 import React from "react";
-import Footer from "./components/Footer";
-import Navigation from "./components/Navigation";
-import TaskList from "./components/TaskList";
-import Warning from "./components/Warning";
-import Logo from "./components/Logo";
+import Footer from "./src/components/Footer";
+import Navigation from "./src/components/Navigation";
+import TaskList from "./src/components/TaskList";
+import Warning from "./src/components/Warning";
+import Logo from "./src/components/Logo";
 
 import { BrowserRouter as Router } from "react-router-dom";
 
