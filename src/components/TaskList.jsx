@@ -4,6 +4,7 @@ export default function TaskList() {
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskPriority, setNewTaskPriority] = useState("Low");
   const [tasks, setTasks] = useState([]);
+  const [showCompleted, setShowCompleted] = useState(true);
 
   // local storage load
   useEffect(() => {
@@ -32,41 +33,67 @@ export default function TaskList() {
     }
   };
 
-  // status function for complete tasks
-
   function handleToggleStatus(id) {
     setTasks(
-      tasks.map((task) => task.id === id ? { ...task, status: task.status === "complete" ? "incomplete" : "complete" } : task
+      tasks.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              status:
+                task.status === "complete" ? "incomplete" : "complete",
+            }
+          : task
       )
     );
   }
 
-  // remove tasks
-
   function handleRemoveTask(id) {
     setTasks(tasks.filter((task) => task.id !== id));
   }
-
-  // task sorting
 
   tasks.sort((task1, task2) => {
     const priorities = ["High", "Medium", "Low"];
     return priorities.indexOf(task2.priority) - priorities.indexOf(task1.priority);
   });
 
+  function handleToggleShowCompleted() {
+    setShowCompleted(!showCompleted);
+  }
+
   return (
     <div className="tasklist">
+      <div className="d-flex justify-content-end mb-3">
+        <button
+          className="btn btn-outline-secondary"
+          onClick={handleToggleShowCompleted}
+        >
+          {showCompleted ? "Hide Completed" : "Show Completed"}
+        </button>
+      </div>
       <ul className="list-group">
         {tasks
-          .filter((task) => task.status === "incomplete")
+          .filter((task) =>
+            showCompleted ? true : task.status === "incomplete"
+          )
           .map((task) => (
-            <li key={task.id} className="list-group-item d-flex justify-content-between align-items-center">
+            <li
+              key={task.id}
+              className="list-group-item d-flex justify-content-between align-items-center"
+            >
               <div>
-                <span className="me-3">{task.title} ({task.priority})</span>
-                <button className="btn btn-outline-primary btn-sm me-2" onClick={() => handleToggleStatus(task.id)}>
+                <span className="me-3">
+                  {task.title} ({task.priority})
+                </span>
+                <button
+                  className="btn btn-outline-primary btn-sm me-2"
+                  onClick={() => handleToggleStatus(task.id)}
+                >
                   {task.status === "complete" ? "Incomplete" : "Complete"}
                 </button>
-                <button className="btn btn-outline-danger btn-sm" onClick={() => handleRemoveTask(task.id)}>
+                <button
+                  className="btn btn-outline-danger btn-sm"
+                  onClick={() => handleRemoveTask(task.id)}
+                >
                   Remove
                 </button>
               </div>
