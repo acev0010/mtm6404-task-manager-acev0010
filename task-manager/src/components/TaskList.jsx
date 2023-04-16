@@ -1,5 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD2hnYG53a0hcVGFoE4OFOPGlWVi8awSUc",
+  authDomain: "task-manager-76444.firebaseapp.com",
+  projectId: "task-manager-76444",
+  storageBucket: "task-manager-76444.appspot.com",
+  messagingSenderId: "179432340354",
+  appId: "1:179432340354:web:2b87cd0cdc777796336d9b",
+  measurementId: "G-1CN90SSX5X"
+};
+
+firebase.initializeApp(firebaseConfig);
+const firestore = firebase.firestore();
 
 export default function TaskList() {
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -7,55 +22,50 @@ export default function TaskList() {
   const [tasks, setTasks] = useState([]);
   const [showCompleted, setShowCompleted] = useState(true);
 
-  // local storage load
+  // load tasks from Firebase
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-    if (storedTasks) {
-      setTasks(storedTasks);
-    }
-  }, []);
+    const unsubscribe = firestore
+      .collection("tasks")
+      .onSnapshot((snapshot) => {
+        const loadedTasks = [];
+        snapshot.forEach((doc) => {
+          loadedTasks.push({ ...doc.data(), id: doc.id });
+        });
+        setTasks(loadedTasks);
+      });
 
-  // local storage save
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
+    return unsubscribe;
+  }, []);
 
   const handleAddTask = () => {
     if (newTaskTitle !== "") {
       const newTask = {
-        id: uuidv4(),
         title: newTaskTitle,
         priority: newTaskPriority,
         status: "incomplete",
       };
-  
-      // update state
-      setTasks((prevTasks) => [...prevTasks, newTask]);
-  
+
+      // add task to Firebase
+      firestore.collection("tasks").add(newTask);
+
       // reset input fields
       setNewTaskTitle("");
       setNewTaskPriority("Low");
     }
   };
 
-  
-
   function handleToggleStatus(id) {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id
-          ? {
-              ...task,
-              status:
-                task.status === "complete" ? "incomplete" : "complete",
-            }
-          : task
-      )
-    );
+    const taskRef = firestore.collection("tasks").doc(id);
+    taskRef.get().then((doc) => {
+      if (doc.exists) {
+        const updatedTask = { ...doc.data(), status: doc.data().status === "complete" ? "incomplete" : "complete" };
+        taskRef.update(updatedTask);
+      }
+    });
   }
 
   function handleRemoveTask(id) {
-    setTasks(tasks.filter((task) => task.id !== id));
+    firestore.collection("tasks").doc(id).delete();
   }
 
   tasks.sort((task1, task2) => {
