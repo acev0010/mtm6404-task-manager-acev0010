@@ -8,6 +8,11 @@ import TaskList from "./components/TaskList";
 import Warning from "./components/Warning";
 import Logo from "./components/Logo";
 
+const Lists = [
+  {id:0, slug:"/list/groceries", name: "groceries"},
+  {id:0, slug:"/list/home", name: "home"},
+]
+
 function App() {
   const [count, setCount] = useState(0)
 
@@ -16,7 +21,7 @@ function App() {
       <div className='container'>
         <div className='header'>
           <Logo />
-          
+          <h1>Task Manager</h1>
             <p> Please check all the tasks below </p>
           
         </div>

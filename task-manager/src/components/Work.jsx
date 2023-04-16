@@ -4,13 +4,13 @@ import TaskList from "./TaskList";
 import Warning from "./Warning";
 import Logo from "./Logo";
 
-export default function School() {
+export default function Work() {
   return (
     <div className='container'>
     <div className='header'>
       <Logo />
-      <h1>School list</h1>
-        <p> This is the school list </p>
+      <h1>Work list</h1>
+        <p> This is the Work list </p>
       
     </div>
     <Navigation />
