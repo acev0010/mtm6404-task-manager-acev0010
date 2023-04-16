@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 export default function TaskList() {
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -8,36 +9,40 @@ export default function TaskList() {
 
   // local storage load
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem("tasks"));
+    const storedTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
     if (storedTasks) {
       setTasks(storedTasks);
     }
   }, []);
 
-  // local storage
+  // local storage save
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem("tasks"));
-    console.log("Stored tasks: ", storedTasks);
-    if (storedTasks && storedTasks.length > 0) {
-      setTasks(storedTasks);
-    }
-  }, []);
-  
-  
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   const handleAddTask = () => {
     if (newTaskTitle !== "") {
       const newTask = {
-        id: tasks.length + 1,
+        id: uuidv4(),
         title: newTaskTitle,
         priority: newTaskPriority,
         status: "incomplete",
       };
-      setTasks([...tasks, newTask]);
+  
+      // update state
+      setTasks((prevTasks) => [...prevTasks, newTask]);
+  
+      // reset input fields
       setNewTaskTitle("");
       setNewTaskPriority("Low");
     }
   };
+  
+  // local storage save
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+  
 
   function handleToggleStatus(id) {
     setTasks(
@@ -129,4 +134,4 @@ export default function TaskList() {
       </div>
     </div>
   );
-};
+          }
