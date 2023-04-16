@@ -37,11 +37,7 @@ export default function TaskList() {
       setNewTaskPriority("Low");
     }
   };
-  
-  // local storage save
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
+
   
 
   function handleToggleStatus(id) {
