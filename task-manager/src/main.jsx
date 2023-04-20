@@ -12,18 +12,18 @@ const router = createBrowserRouter([
     path: "/",
     element: <App />
   },
-  {
-    path:"/school",
-    element: <School />
-  },
+  // {
+  //   path:"/school",
+  //   element: <School />
+  // },
   {
     path:"/list/:id",
     element: <List />
   },
-  {
-    path:"/work",
-    element: <Work />
-  },
+  // {
+  //   path:"/work",
+  //   element: <Work />
+  // },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

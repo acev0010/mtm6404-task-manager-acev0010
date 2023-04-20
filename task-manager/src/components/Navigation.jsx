@@ -13,12 +13,12 @@ export default function Navigation() {
             </Link>
           </li>
           <li className="nav-item">
-          <Link to="/school" className="nav-link">
+          <Link to="/list/school" className="nav-link">
               School
             </Link>
           </li>
           <li className="nav-item">
-          <Link to="/work" className="nav-link">
+          <Link to="/list/work" className="nav-link">
               Work
             </Link>
           </li>

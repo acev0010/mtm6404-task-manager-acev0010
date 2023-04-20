@@ -16,9 +16,9 @@ export default function TaskList() {
   }, []);
 
   // local storage save
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
+  // useEffect(() => {
+  //   localStorage.setItem("tasks", JSON.stringify(tasks));
+  // }, [tasks]);
 
   const handleAddTask = () => {
     if (newTaskTitle !== "") {
@@ -31,6 +31,7 @@ export default function TaskList() {
   
       // update state
       setTasks((prevTasks) => [...prevTasks, newTask]);
+      localStorage.setItem("tasks", JSON.stringify([...tasks, newTask]));
   
       // reset input fields
       setNewTaskTitle("");
@@ -55,8 +56,11 @@ export default function TaskList() {
   }
 
   function handleRemoveTask(id) {
-    setTasks(tasks.filter((task) => task.id !== id));
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks);
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
   }
+  
 
   tasks.sort((task1, task2) => {
     const priorities = ["High", "Medium", "Low"];
