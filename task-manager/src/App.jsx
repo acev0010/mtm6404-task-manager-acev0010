@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import { Link, Route, Switch } from 'react-router-dom';
-import './App.css';
+import React, { useState } from "react";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import "./App.css";
 import Navigation from "./components/Navigation";
-import React from "react";
 import Footer from "./components/Footer";
 import TaskList from "./components/TaskList";
 import Warning from "./components/Warning";
@@ -10,13 +9,29 @@ import Logo from "./components/Logo";
 import ListForm from "./components/ListForm";
 import List from "./components/List";
 
-const Lists = [
-  { id: 0, slug: "/list/groceries", name: "groceries" },
-  { id: 1, slug: "/list/home", name: "home" },
-];
-
 function App() {
-  const [count, setCount] = useState(0);
+  const [lists, setLists] = useState(() => {
+    const storedLists = JSON.parse(localStorage.getItem("lists"));
+    return storedLists || ["groceries", "home"];
+  });
+
+  const navigate = useNavigate();
+
+  const addList = (listName) => {
+    const newLists = [...lists, listName];
+    setLists(newLists);
+    localStorage.setItem("lists", JSON.stringify(newLists));
+    navigate(`/list/${listName}`);
+  };
+  
+
+  const deleteList = (listName) => {
+    const newLists = lists.filter((list) => list !== listName);
+    setLists(newLists);
+    localStorage.setItem("lists", JSON.stringify(newLists));
+    navigate("/");
+    localStorage.removeItem(listName);
+  };
 
   return (
     <div className="container">
@@ -25,15 +40,17 @@ function App() {
         <h1>Task Manager</h1>
         <p>Please check all the tasks below</p>
       </div>
-      <ListForm />
-      <Navigation />
-      <Switch>
-        {Lists.map((list) => (
-          <Route key={list.id} path={list.slug}>
-            <List id={list.id} />
-          </Route>
+      <ListForm onAddList={addList} />
+      <Navigation lists={lists} />
+      <Routes>
+        {lists.map((list) => (
+          <Route
+            key={list}
+            path={`/list/${list}`}
+            element={<List id={list} deleteList={deleteList} />}
+          />
         ))}
-      </Switch>
+      </Routes>
       <TaskList />
       <Warning course="Motion Graphics II" overdue="Overdue" />
       <Footer />

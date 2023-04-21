@@ -1,8 +1,7 @@
 import React from "react";
 import { Link } from 'react-router-dom';
 
-
-export default function Navigation() {
+export default function Navigation({ lists }) {
   return (
     <div className="card text-center">
       <div className="card-header">
@@ -12,21 +11,13 @@ export default function Navigation() {
               Home
             </Link>
           </li>
-          <li className="nav-item">
-          <Link to="/list/school" className="nav-link">
-              School
-            </Link>
-          </li>
-          <li className="nav-item">
-          <Link to="/list/work" className="nav-link">
-              Work
-            </Link>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link">
-              Household
-            </a>
-          </li>
+          {lists && lists.map(list => (
+            <li key={list} className="nav-item">
+              <Link to={`/list/${list}`} className="nav-link">
+                {list}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

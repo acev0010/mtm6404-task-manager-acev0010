@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router-dom";
 
-
-function ListForm(props) {
+function ListForm({ onAddList }) {
   const [listName, setListName] = useState("");
   const [listKey, setListKey] = useState("");
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleListNameChange = (event) => {
     setListName(event.target.value);
@@ -24,7 +23,8 @@ function ListForm(props) {
     localStorage.setItem(listKey, JSON.stringify(newList));
     setListName("");
     setListKey("");
-    history.push(`/list/${listKey}`);
+    onAddList(listKey); // <-- call onAddList with the new list key
+    navigate(`/list/${listKey}`);
   };
 
   return (
