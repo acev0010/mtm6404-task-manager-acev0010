@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from "react";
-import * as firebase from "../firebase"
+import { useParams } from "react-router-dom";
+import * as firebase from "../firebase";
 import "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../firebase";
 
-
-
 export default function TaskList() {
+  const { id } = useParams();
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskPriority, setNewTaskPriority] = useState("Low");
   const [tasks, setTasks] = useState([]);
   const [showCompleted, setShowCompleted] = useState(true);
 
-  // load tasks from Firebase
   useEffect(() => {
-    db.collection("tasks").onSnapshot((snapshot) => {
+    const tasksRef = db.collection(`lists/${id}/tasks`);
+    tasksRef.onSnapshot((snapshot) => {
       const updatedTasks = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
       setTasks(updatedTasks);
     });
-  }, []);
+  }, [id]);
 
   const handleAddTask = () => {
     if (newTaskTitle !== "") {
@@ -32,30 +32,30 @@ export default function TaskList() {
         status: "incomplete",
       };
 
-      // add task to Firebase
-      db.collection("tasks").doc(newTask.id).set(newTask);
+      const tasksRef = db.collection(`lists/${id}/tasks`);
+      tasksRef.doc(newTask.id).set(newTask);
 
-      // reset input fields
       setNewTaskTitle("");
       setNewTaskPriority("Low");
     }
   };
 
-  function handleToggleStatus(id) {
-    const taskToUpdate = tasks.find((task) => task.id === id);
-    const updatedTask = {
-      ...taskToUpdate,
-      status: taskToUpdate.status === "complete" ? "incomplete" : "complete",
-    };
+  function handleToggleStatus(doc) {
+  const updatedTask = {
+    ...doc.data(),
+    status: doc.data().status === "complete" ? "incomplete" : "complete",
+  };
 
-    // update task in Firebase
-    db.collection("tasks").doc(id).set(updatedTask);
-  }
+  // update task in Firebase
+  db.collection("lists").doc(id).collection("tasks").doc(doc.id).set(updatedTask);
+}
 
-  function handleRemoveTask(id) {
-    // remove task from Firebase
-    db.collection("tasks").doc(id).delete();
-  }
+function handleRemoveTask(task) {
+  // remove task from Firebase
+  db.collection(`lists/${id}/tasks`).doc(task.id).delete();
+}
+
+  
 
   function handleToggleShowCompleted() {
     setShowCompleted(!showCompleted);
@@ -65,6 +65,7 @@ export default function TaskList() {
     const priorities = ["High", "Medium", "Low"];
     return priorities.indexOf(task2.priority) - priorities.indexOf(task1.priority);
   });
+
 
   return (
     <div className="tasklist">
@@ -91,17 +92,18 @@ export default function TaskList() {
                   {task.title} ({task.priority})
                 </span>
                 <button
-                  className="btn btn-outline-primary btn-sm me-2"
-                  onClick={() => handleToggleStatus(task.id)}
-                >
-                  {task.status === "complete" ? "Incomplete" : "Complete"}
-                </button>
-                <button
-                  className="btn btn-outline-danger btn-sm"
-                  onClick={() => handleRemoveTask(task.id)}
-                >
-                  Remove
-                </button>
+  className="btn btn-outline-primary btn-sm me-2"
+  onClick={() => handleToggleStatus(task)}
+>
+  {task.status === "complete" ? "Incomplete" : "Complete"}
+</button>
+<button
+  className="btn btn-outline-danger btn-sm"
+  onClick={() => handleRemoveTask(task)}
+>
+  Remove
+</button>
+
               </div>
             </li>
           ))}
@@ -129,4 +131,5 @@ export default function TaskList() {
       </div>
     </div>
   );
-          }
+  
+        }

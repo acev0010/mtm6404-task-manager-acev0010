@@ -34,6 +34,7 @@ function ListForm({ onAddList }) {
       <h2>Create a new list</h2>
       <form onSubmit={handleSubmit}>
         <label>
+          List name:
           <input
             type="text"
             className="form-control"
@@ -43,6 +44,7 @@ function ListForm({ onAddList }) {
           />
         </label>
         <label>
+          List key:
           <input
             type="text"
             className="form-control"

@@ -11,8 +11,7 @@ import firebase from "./firebase";
 
 function App() {
   const [lists, setLists] = useState([]);
-  const [currentListName, setCurrentListName] = useState('');
-  
+  const [currentList, setCurrentList] = useState(null);
 
   // load lists from Firebase on component mount
   useEffect(() => {
@@ -40,12 +39,12 @@ function App() {
     const updates = {};
     updates["/lists/" + newListKey] = newList;
     firebase.database().ref().update(updates);
-    navigate(`/list/${newListKey}`);
+    setCurrentList({ key: newListKey, name: listName });
   };
 
   const deleteList = (listKey) => {
     firebase.database().ref(`/lists/${listKey}`).remove();
-    navigate("/");
+    setCurrentList(null);
   };
 
   return (
@@ -64,7 +63,7 @@ function App() {
             path={`/list/${list.key}`}
             element={
               <>
-                <h2>{list.name}</h2>
+                <h2>{currentList?.name || list.name}</h2>
                 <List id={list.key} deleteList={deleteList} />
               </>
             }

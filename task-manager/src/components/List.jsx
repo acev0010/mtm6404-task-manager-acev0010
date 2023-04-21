@@ -24,6 +24,11 @@ function List({ deleteList }) {
     return () => listRef.off();
   }, [id]);
 
+  // update list name when route parameters change
+  useEffect(() => {
+    setListName("");
+  }, [id]);
+
   // Update local storage whenever items change
   useEffect(() => {
     localStorage.setItem(id, JSON.stringify(items));
