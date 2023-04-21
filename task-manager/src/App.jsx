@@ -4,7 +4,6 @@ import "./App.css";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
 import TaskList from "./components/TaskList";
-import Warning from "./components/Warning";
 import Logo from "./components/Logo";
 import ListForm from "./components/ListForm";
 import List from "./components/List";
@@ -67,7 +66,6 @@ function App() {
         ))}
       </Routes>
       <TaskList />
-      <Warning course="Motion Graphics II" overdue="Overdue" />
       <Footer />
     </div>
   );

@@ -22,26 +22,29 @@ function ListForm({ onAddList }) {
       name: listName,
       items: [],
     };
-    const docRef = await db.collection("lists").doc(listKey).set(newList);
+    const docRef = await db.collection("lists").doc(listName).set(newList);
     setListName("");
     setListKey("");
-    onAddList(listKey);
-    navigate(`/list/${listKey}`);
+    onAddList(listName);
+    navigate(`/list/${listName}`);
   };
+  
 
   return (
     <div>
       <h2>Create a new list</h2>
       <form onSubmit={handleSubmit}>
         <label>
-          List name:
-          <input type="text" value={listName} onChange={handleListNameChange} />
+          <input type="text"
+          className="form-control"
+          placeholder="Add List name..." value={listName} onChange={handleListNameChange} />
         </label>
         <label>
-          List key:
-          <input type="text" value={listKey} onChange={handleListKeyChange} />
+          <input type="text"
+          className="form-control"
+          placeholder="Add unique Key..." value={listKey} onChange={handleListKeyChange} />
         </label>
-        <button type="submit">Create List</button>
+        <button className="btn btn-primary" type="submit">Create List</button>
       </form>
     </div>
   );

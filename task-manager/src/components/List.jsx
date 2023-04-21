@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "./Navigation";
 import TaskList from "./TaskList";
+import Logo from "./Logo";
 
 function List({ id, deleteList }) {
   const [items, setItems] = useState([]);
@@ -51,7 +52,9 @@ function List({ id, deleteList }) {
 
   return (
     <div>
+      <Logo />
       <h2>{id}</h2>
+        <p>Please check all the tasks below</p>
       <Navigation lists={lists} />
       <TaskList
         items={items}
