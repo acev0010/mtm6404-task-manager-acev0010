@@ -61,10 +61,21 @@ function List({ deleteList }) {
     setListName(newName);
   };
 
+  const handleDeleteList = () => {
+    const listRef = firebase.database().ref(`lists/${id}`);
+    listRef.remove();
+    const updatedLists = lists.filter((list) => list.id !== id);
+    localStorage.setItem("lists", JSON.stringify(updatedLists));
+    navigate("/");
+  };
+
   return (
     <div>
       <Logo />
       <h2>{listName}</h2>
+      <button className="btn btn-danger" onClick={handleDeleteList}>
+        Delete List
+      </button>
       <ListForm onAddList={handleUpdateListName} />
       <p>Please check all the tasks below</p>
       <Navigation lists={lists} />
