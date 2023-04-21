@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+<<<<<<< HEAD
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 
@@ -21,6 +22,14 @@ const db = getFirestore(app);
 function ListForm(props) {
   const [listName, setListName] = useState("");
   const [listKey, setListKey] = useState("");
+=======
+import { useNavigate } from "react-router-dom";
+
+function ListForm({ onAddList }) {
+  const [listName, setListName] = useState("");
+  const [listKey, setListKey] = useState("");
+  const navigate = useNavigate();
+>>>>>>> d2cca0065963983cf6d2671ca7372b3217ae5091
 
   const handleListNameChange = (event) => {
     setListName(event.target.value);
@@ -30,6 +39,7 @@ function ListForm(props) {
     setListKey(event.target.value);
   };
 
+<<<<<<< HEAD
   const handleSubmit = async (event) => {
     event.preventDefault();
     const newList = {
@@ -45,6 +55,19 @@ function ListForm(props) {
     } catch (error) {
       console.error("Error adding document: ", error);
     }
+=======
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const newList = {
+      name: listName,
+      items: [],
+    };
+    localStorage.setItem(listKey, JSON.stringify(newList));
+    setListName("");
+    setListKey("");
+    onAddList(listKey); // <-- call onAddList with the new list key
+    navigate(`/list/${listKey}`);
+>>>>>>> d2cca0065963983cf6d2671ca7372b3217ae5091
   };
 
   return (

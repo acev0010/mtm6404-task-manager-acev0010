@@ -37,6 +37,11 @@ export default function TaskList() {
     return unsubscribe;
   }, []);
 
+  // local storage save
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
   const handleAddTask = () => {
     if (newTaskTitle !== "") {
       const newTask = {
@@ -44,10 +49,10 @@ export default function TaskList() {
         priority: newTaskPriority,
         status: "incomplete",
       };
-
-      // add task to Firebase
-      firestore.collection("tasks").add(newTask);
-
+  
+      // update state
+      setTasks((prevTasks) => [...prevTasks, newTask]);
+  
       // reset input fields
       setNewTaskTitle("");
       setNewTaskPriority("Low");
@@ -65,8 +70,9 @@ export default function TaskList() {
   }
 
   function handleRemoveTask(id) {
-    firestore.collection("tasks").doc(id).delete();
+    setTasks(tasks.filter((task) => task.id !== id));
   }
+  
 
   tasks.sort((task1, task2) => {
     const priorities = ["High", "Medium", "Low"];
