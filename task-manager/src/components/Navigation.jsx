@@ -1,10 +1,24 @@
-import { useEffect, useState } from "react";
-import Navigation from "./Navigation";
-import { useParams } from "react-router-dom";
-import { getFirestore, collection, doc, getDocs, deleteDoc } from "firebase/firestore";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import "firebase/compat/firestore";
+import "firebase/compat/database";
+import firebase from "../firebase";
 
 
 export default function Navigation() {
+  const [lists, setLists] = useState([]);
+
+  useEffect(() => {
+    // Fetch the lists from Firestore
+    const db = firebase.firestore();
+    db.collection("lists")
+      .get()
+      .then((querySnapshot) => {
+        const lists = querySnapshot.docs.map((doc) => doc.id);
+        setLists(lists);
+      });
+  }, []);
+
   return (
     <div className="card text-center">
       <div className="card-header">
@@ -14,21 +28,13 @@ export default function Navigation() {
               Home
             </Link>
           </li>
-          <li className="nav-item">
-          <Link to="/school" className="nav-link">
-              School
-            </Link>
-          </li>
-          <li className="nav-item">
-          <Link to="/work" className="nav-link">
-              Work
-            </Link>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link">
-              Household
-            </a>
-          </li>
+          {lists.map((list) => (
+            <li key={list} className="nav-item">
+              <Link to={`/list/${list}`} className="nav-link">
+                {list}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

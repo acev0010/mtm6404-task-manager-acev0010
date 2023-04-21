@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from "react";
+import * as firebase from "../firebase"
+import "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
-import firebase from "firebase/compat/app";
-import "firebase/compat/firestore";
+import { db } from "../firebase";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD2hnYG53a0hcVGFoE4OFOPGlWVi8awSUc",
-  authDomain: "task-manager-76444.firebaseapp.com",
-  projectId: "task-manager-76444",
-  storageBucket: "task-manager-76444.appspot.com",
-  messagingSenderId: "179432340354",
-  appId: "1:179432340354:web:2b87cd0cdc777796336d9b",
-  measurementId: "G-1CN90SSX5X"
-};
 
-firebase.initializeApp(firebaseConfig);
-const firestore = firebase.firestore();
 
 export default function TaskList() {
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -24,35 +14,27 @@ export default function TaskList() {
 
   // load tasks from Firebase
   useEffect(() => {
-    const unsubscribe = firestore
-      .collection("tasks")
-      .onSnapshot((snapshot) => {
-        const loadedTasks = [];
-        snapshot.forEach((doc) => {
-          loadedTasks.push({ ...doc.data(), id: doc.id });
-        });
-        setTasks(loadedTasks);
-      });
-
-    return unsubscribe;
+    db.collection("tasks").onSnapshot((snapshot) => {
+      const updatedTasks = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setTasks(updatedTasks);
+    });
   }, []);
-
-  // local storage save
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
 
   const handleAddTask = () => {
     if (newTaskTitle !== "") {
       const newTask = {
+        id: uuidv4(),
         title: newTaskTitle,
         priority: newTaskPriority,
         status: "incomplete",
       };
-  
-      // update state
-      setTasks((prevTasks) => [...prevTasks, newTask]);
-  
+
+      // add task to Firebase
+      db.collection("tasks").doc(newTask.id).set(newTask);
+
       // reset input fields
       setNewTaskTitle("");
       setNewTaskPriority("Low");
@@ -60,28 +42,29 @@ export default function TaskList() {
   };
 
   function handleToggleStatus(id) {
-    const taskRef = firestore.collection("tasks").doc(id);
-    taskRef.get().then((doc) => {
-      if (doc.exists) {
-        const updatedTask = { ...doc.data(), status: doc.data().status === "complete" ? "incomplete" : "complete" };
-        taskRef.update(updatedTask);
-      }
-    });
+    const taskToUpdate = tasks.find((task) => task.id === id);
+    const updatedTask = {
+      ...taskToUpdate,
+      status: taskToUpdate.status === "complete" ? "incomplete" : "complete",
+    };
+
+    // update task in Firebase
+    db.collection("tasks").doc(id).set(updatedTask);
   }
 
   function handleRemoveTask(id) {
-    setTasks(tasks.filter((task) => task.id !== id));
+    // remove task from Firebase
+    db.collection("tasks").doc(id).delete();
   }
-  
-
-  tasks.sort((task1, task2) => {
-    const priorities = ["High", "Medium", "Low"];
-    return priorities.indexOf(task2.priority) - priorities.indexOf(task1.priority);
-  });
 
   function handleToggleShowCompleted() {
     setShowCompleted(!showCompleted);
   }
+
+  const sortedTasks = [...tasks].sort((task1, task2) => {
+    const priorities = ["High", "Medium", "Low"];
+    return priorities.indexOf(task2.priority) - priorities.indexOf(task1.priority);
+  });
 
   return (
     <div className="tasklist">
@@ -94,7 +77,7 @@ export default function TaskList() {
         </button>
       </div>
       <ul className="list-group">
-        {tasks
+        {sortedTasks
           .filter((task) =>
             showCompleted ? true : task.status === "incomplete"
           )
