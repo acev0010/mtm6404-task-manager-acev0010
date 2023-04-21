@@ -29,6 +29,14 @@ function ListForm({ onAddList }) {
     navigate(`/list/${listName}`);
   };
 
+  const handleDelete = async (event) => {
+    event.preventDefault();
+    await db.collection("lists").doc(listName).delete();
+    setListName("");
+    setListKey("");
+    navigate("/");
+  };
+
   return (
     <div>
       <h2>Create a new list</h2>
@@ -57,6 +65,13 @@ function ListForm({ onAddList }) {
           Create List
         </button>
       </form>
+      {listName && (
+        <form onSubmit={handleDelete}>
+          <button className="btn btn-danger mt-2" type="submit">
+            Delete list
+          </button>
+        </form>
+      )}
     </div>
   );
 }

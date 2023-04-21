@@ -12,13 +12,14 @@ function List({ deleteList }) {
   const [listName, setListName] = useState("");
   const [items, setItems] = useState([]);
 
-  // load list name from Firebase on component mount
+  // load list name and items from Firebase on component mount
   useEffect(() => {
     const listRef = firebase.database().ref(`lists/${id}`);
     listRef.once("value", (snapshot) => {
       const listData = snapshot.val();
       if (listData) {
         setListName(listData.name);
+        setItems(listData.items || []);
       }
     });
     return () => listRef.off();
@@ -29,9 +30,11 @@ function List({ deleteList }) {
     setListName("");
   }, [id]);
 
-  // Update local storage whenever items change
+  // update Firebase whenever items change
   useEffect(() => {
-    localStorage.setItem(id, JSON.stringify(items));
+    const listRef = firebase.database().ref(`lists/${id}`);
+    listRef.update({ items });
+    return () => listRef.off();
   }, [id, items]);
 
   const handleAddItem = (newItem) => {
@@ -53,32 +56,30 @@ function List({ deleteList }) {
     setItems(updatedItems);
   };
 
-  // Retrieve lists from local storage and parse as array
-  const lists = JSON.parse(localStorage.getItem("lists")) || [];
-
-  // Function to update list name
   const handleUpdateListName = (newName) => {
+    const listRef = firebase.database().ref(`lists/${id}`);
+    listRef.update({ name: newName });
     setListName(newName);
   };
 
   const handleDeleteList = () => {
-    const listRef = firebase.database().ref(`lists/${id}`);
+    const listRef = firebase.database().ref(`lists/${listName}`);
     listRef.remove();
-    const updatedLists = lists.filter((list) => list.id !== id);
-    localStorage.setItem("lists", JSON.stringify(updatedLists));
     navigate("/");
   };
+  
 
   return (
     <div>
       <Logo />
       <h2>{listName}</h2>
       <button className="btn btn-danger" onClick={handleDeleteList}>
-        Delete List
-      </button>
+  Delete List
+</button>
+
       <ListForm onAddList={handleUpdateListName} />
       <p>Please check all the tasks below</p>
-      <Navigation lists={lists} />
+      <Navigation />
       <TaskList
         items={items}
         onAddItem={handleAddItem}

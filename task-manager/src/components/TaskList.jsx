@@ -10,7 +10,7 @@ export default function TaskList() {
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskPriority, setNewTaskPriority] = useState("Low");
   const [tasks, setTasks] = useState([]);
-  const [showCompleted, setShowCompleted] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(false);
 
   useEffect(() => {
     const tasksRef = db.collection(`lists/${id}/tasks`);
@@ -41,21 +41,23 @@ export default function TaskList() {
   };
 
   function handleToggleStatus(doc) {
-  const updatedTask = {
-    ...doc.data(),
-    status: doc.data().status === "complete" ? "incomplete" : "complete",
-  };
+    const updatedTask = {
+      ...doc.data(),
+      status: doc.data().status === "complete" ? "incomplete" : "complete",
+    };
 
-  // update task in Firebase
-  db.collection("lists").doc(id).collection("tasks").doc(doc.id).set(updatedTask);
-}
+    // update task in Firebase
+    db.collection("lists")
+      .doc(id)
+      .collection("tasks")
+      .doc(doc.id)
+      .set(updatedTask);
+  }
 
-function handleRemoveTask(task) {
-  // remove task from Firebase
-  db.collection(`lists/${id}/tasks`).doc(task.id).delete();
-}
-
-  
+  function handleRemoveTask(task) {
+    // remove task from Firebase
+    db.collection(`lists/${id}/tasks`).doc(task.id).delete();
+  }
 
   function handleToggleShowCompleted() {
     setShowCompleted(!showCompleted);
@@ -65,7 +67,6 @@ function handleRemoveTask(task) {
     const priorities = ["High", "Medium", "Low"];
     return priorities.indexOf(task2.priority) - priorities.indexOf(task1.priority);
   });
-
 
   return (
     <div className="tasklist">
@@ -82,7 +83,33 @@ function handleRemoveTask(task) {
           .filter((task) =>
             showCompleted ? true : task.status === "incomplete"
           )
-          .map((task) => (
+          .map((task) =>
+            task.status === "complete" ? (
+              showCompleted && (
+                <li
+                  key={task.id}
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div>
+                    <span className="me-3">
+                      {task.title} ({task.priority})
+                    </span>
+                    <button
+                      className="btn btn-outline-primary btn-sm me-2"
+                      onClick={() => handleToggleStatus(task)}
+                    >
+                      Incomplete
+                    </button>
+                    <button
+                      className="btn btn-outline-danger btn-sm"
+                      onClick={() => handleRemoveTask(task)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </li>
+              )
+            ) : (
             <li
               key={task.id}
               className="list-group-item d-flex justify-content-between align-items-center"
