@@ -5,6 +5,28 @@
   text-align: center;
 }
 
+.navbar {
+  display: flex;
+}
+
+.list-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.list-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  margin: 0.5rem;
+}
+
+
+
 .logo {
   height: 6em;
   padding: 1.5em;
