@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Route, Routes, useParams, useNavigate } from "react-router-dom";
 import "./App.css";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
@@ -11,7 +11,8 @@ import firebase from "./firebase";
 
 function App() {
   const [lists, setLists] = useState([]);
-  const navigate = useNavigate();
+  const [currentListName, setCurrentListName] = useState('');
+  
 
   // load lists from Firebase on component mount
   useEffect(() => {
@@ -61,7 +62,12 @@ function App() {
           <Route
             key={list.key}
             path={`/list/${list.key}`}
-            element={<List id={list.key} deleteList={deleteList} />}
+            element={
+              <>
+                <h2>{list.name}</h2>
+                <List id={list.key} deleteList={deleteList} />
+              </>
+            }
           />
         ))}
       </Routes>

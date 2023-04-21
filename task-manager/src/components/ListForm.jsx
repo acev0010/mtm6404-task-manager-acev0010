@@ -28,27 +28,35 @@ function ListForm({ onAddList }) {
     onAddList(listName);
     navigate(`/list/${listName}`);
   };
-  
 
   return (
     <div>
       <h2>Create a new list</h2>
       <form onSubmit={handleSubmit}>
         <label>
-          <input type="text"
-          className="form-control"
-          placeholder="Add List name..." value={listName} onChange={handleListNameChange} />
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Add List name..."
+            value={listName}
+            onChange={handleListNameChange}
+          />
         </label>
         <label>
-          <input type="text"
-          className="form-control"
-          placeholder="Add unique Key..." value={listKey} onChange={handleListKeyChange} />
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Add unique Key..."
+            value={listKey}
+            onChange={handleListKeyChange}
+          />
         </label>
-        <button className="btn btn-primary" type="submit">Create List</button>
+        <button className="btn btn-primary" type="submit">
+          Create List
+        </button>
       </form>
     </div>
   );
 }
-
 
 export default ListForm;

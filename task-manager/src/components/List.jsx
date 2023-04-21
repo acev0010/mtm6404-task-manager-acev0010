@@ -1,17 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Navigation from "./Navigation";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import ListForm from "./ListForm";
 import TaskList from "./TaskList";
+import firebase from "../firebase";
 import Logo from "./Logo";
+import Navigation from "./Navigation";
 
-function List({ id, deleteList }) {
-  const [items, setItems] = useState([]);
+function List({ deleteList }) {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const [listName, setListName] = useState("");
+  const [items, setItems] = useState([]);
 
-  // Retrieve items from local storage on mount
+  // load list name from Firebase on component mount
   useEffect(() => {
-    const storedItems = JSON.parse(localStorage.getItem(id)) || [];
-    setItems(storedItems);
+    const listRef = firebase.database().ref(`lists/${id}`);
+    listRef.once("value", (snapshot) => {
+      const listData = snapshot.val();
+      if (listData) {
+        setListName(listData.name);
+      }
+    });
+    return () => listRef.off();
   }, [id]);
 
   // Update local storage whenever items change
@@ -38,23 +48,20 @@ function List({ id, deleteList }) {
     setItems(updatedItems);
   };
 
-  const handleDeleteList = () => {
-    const confirmed = window.confirm("Are you sure you want to delete this list?");
-    if (confirmed) {
-      localStorage.removeItem(id);
-      deleteList(id);
-      navigate("/");
-    }
-  };
-
   // Retrieve lists from local storage and parse as array
   const lists = JSON.parse(localStorage.getItem("lists")) || [];
+
+  // Function to update list name
+  const handleUpdateListName = (newName) => {
+    setListName(newName);
+  };
 
   return (
     <div>
       <Logo />
-      <h2>{id}</h2>
-        <p>Please check all the tasks below</p>
+      <h2>{listName}</h2>
+      <ListForm onAddList={handleUpdateListName} />
+      <p>Please check all the tasks below</p>
       <Navigation lists={lists} />
       <TaskList
         items={items}
@@ -62,7 +69,6 @@ function List({ id, deleteList }) {
         onDeleteItem={handleDeleteItem}
         onToggleDone={handleToggleDone}
       />
-      <button onClick={handleDeleteList}>Delete List</button>
     </div>
   );
 }
