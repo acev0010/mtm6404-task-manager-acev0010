@@ -41,18 +41,24 @@ export default function TaskList() {
   };
 
   function handleToggleStatus(doc) {
-    const updatedTask = {
-      ...doc.data(),
-      status: doc.data().status === "complete" ? "incomplete" : "complete",
-    };
-
-    // update task in Firebase
-    db.collection("lists")
-      .doc(id)
-      .collection("tasks")
-      .doc(doc.id)
-      .set(updatedTask);
+    console.log('doc:', doc);
+    console.log('doc instanceof firebase.firestore.DocumentSnapshot:', doc instanceof firebase.firestore.DocumentSnapshot);
+  
+    if (doc && doc instanceof firebase.firestore.DocumentSnapshot) {
+      const updatedTask = {
+        ...doc.data(),
+        status: doc.data().status === "complete" ? "incomplete" : "complete",
+      };
+  
+      // update task in Firebase
+      db.collection("lists")
+        .doc(id)
+        .collection("tasks")
+        .doc(doc.id)
+        .set(updatedTask);
+    }
   }
+  
 
   function handleRemoveTask(task) {
     // remove task from Firebase
@@ -119,18 +125,18 @@ export default function TaskList() {
                   {task.title} ({task.priority})
                 </span>
                 <button
-  className="btn btn-outline-primary btn-sm me-2"
-  onClick={() => handleToggleStatus(task)}
->
-  {task.status === "complete" ? "Incomplete" : "Complete"}
-</button>
-<button
-  className="btn btn-outline-danger btn-sm"
-  onClick={() => handleRemoveTask(task)}
->
-  Remove
-</button>
-
+      className="btn btn-outline-primary btn-sm me-2"
+      onClick={() => handleToggleStatus(task)}
+    >
+      {task.status === "complete" ? "Incomplete" : "Complete"}
+    </button>
+    <button
+      className="btn btn-outline-danger btn-sm"
+      onClick={() => handleRemoveTask(task)}
+    >
+      Remove
+    </button>
+  
               </div>
             </li>
           ))}
@@ -158,5 +164,6 @@ export default function TaskList() {
       </div>
     </div>
   );
+  
   
         }

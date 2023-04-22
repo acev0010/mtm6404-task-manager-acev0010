@@ -6,7 +6,7 @@ import firebase from "../firebase";
 import Logo from "./Logo";
 import Navigation from "./Navigation";
 
-function List({ deleteList }) {
+function List({ }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [listName, setListName] = useState("");
@@ -41,11 +41,6 @@ function List({ deleteList }) {
     setItems([...items, newItem]);
   };
 
-  const handleDeleteItem = (idToDelete) => {
-    const updatedItems = items.filter((item) => item.id !== idToDelete);
-    setItems(updatedItems);
-  };
-
   const handleToggleDone = (idToToggle) => {
     const updatedItems = items.map((item) => {
       if (item.id === idToToggle) {
@@ -63,7 +58,7 @@ function List({ deleteList }) {
   };
 
   const handleDeleteList = () => {
-    const listRef = firebase.database().ref(`lists/${listName}`);
+    const listRef = firebase.database().ref(`lists/${id}`);
     listRef.remove();
     navigate("/");
   };
@@ -83,7 +78,7 @@ function List({ deleteList }) {
       <TaskList
         items={items}
         onAddItem={handleAddItem}
-        onDeleteItem={handleDeleteItem}
+        
         onToggleDone={handleToggleDone}
       />
     </div>

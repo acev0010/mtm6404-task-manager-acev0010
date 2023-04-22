@@ -42,10 +42,6 @@ function App() {
     setCurrentList({ key: newListKey, name: listName });
   };
 
-  const deleteList = (listKey) => {
-    firebase.database().ref(`/lists/${listKey}`).remove();
-    setCurrentList(null);
-  };
 
   return (
     <div className="container">
